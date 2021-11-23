@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import Auxiliary from '../../../hoc/Auxiliary/Auxiliary';
 import Button from '../../UI/Button/Button';
@@ -41,16 +40,5 @@ class OrderSummary extends Component {
   }
 }
 
-OrderSummary.propTypes = {
-  ingredients: PropTypes.shape({
-    salad: PropTypes.number.isRequired,
-    bacon: PropTypes.number.isRequired,
-    cheese: PropTypes.number.isRequired,
-    meat: PropTypes.number.isRequired
-  }).isRequired,
-  price: PropTypes.number.isRequired,
-  purchaseCanceled: PropTypes.func.isRequired,
-  purchaseContinued: PropTypes.func.isRequired
-};
 
 export default OrderSummary;
