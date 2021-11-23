@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import classes from './Modal.css';
 import Auxiliary from '../../../hoc/Auxiliary/Auxiliary';
@@ -11,11 +10,10 @@ class Modal extends Component {
   Not extending PureComponent because it would execute more checks than needed.
   */
   shouldComponentUpdate = (nextProps, nextState) => {
-    return nextProps.show !== this.props.show;
+    return nextProps.show !== this.props.show  || nextProps.children !== this.props.children;
   };
 
   componentWillUpdate = (nextProps, nextState) => {
-    console.log(`[Modal] willUpdate`);
   };
 
   render() {
@@ -36,10 +34,5 @@ class Modal extends Component {
   }
 }
 
-Modal.propTypes = {
-  children: PropTypes.element.isRequired,
-  show: PropTypes.bool.isRequired,
-  modalClosed: PropTypes.func.isRequired
-};
 
 export default Modal;

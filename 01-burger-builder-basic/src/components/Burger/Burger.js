@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import classes from './Burger.css';
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
@@ -17,7 +16,6 @@ const Burger = props => {
   // display message if no ingredients added
   if (transformedIngredients.length === 0)
     transformedIngredients = <p>Please start adding ingredients!</p>;
-
   return (
     <div className={classes.Burger}>
       <BurgerIngredient type="bread-top" />
@@ -27,13 +25,5 @@ const Burger = props => {
   );
 };
 
-Burger.propTypes = {
-  ingredients: PropTypes.shape({
-    salad: PropTypes.number.isRequired,
-    bacon: PropTypes.number.isRequired,
-    cheese: PropTypes.number.isRequired,
-    meat: PropTypes.number.isRequired
-  }).isRequired
-};
 
 export default Burger;
