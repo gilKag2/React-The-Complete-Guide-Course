@@ -9,15 +9,21 @@ import Input from '../../../components/UI/Input/Input'
 class ContactData extends Component {
 	state = {
 		orderForm: this.setUpOrderForm(),
+		isFormValid: false,
 		loading: false
 	}
 
 	orderHandler = (event) => {
 		event.preventDefault()
-
 		this.setState({ loading: true })
+		const formData = {}
+		for (let formElement in this.state.orderForm) {
+			formData[formElement] = this.state.orderForm[formElement].value
+		}
 		const order = {
-
+			ingredients: this.props.ingredients,
+			price: this.props.price,
+			order: formData
 		}
 
 		// alert('You CONTINUE!')
@@ -25,6 +31,7 @@ class ContactData extends Component {
 			this.setState({ loading: false })
 			this.props.history.push('/')
 		}).catch(error => {
+			console.log(error);
 			this.setState({ loading: false })
 		})
 	}
@@ -37,8 +44,23 @@ class ContactData extends Component {
 		const updatedFormElement = { ...updatedOrderForm[elementId] }
 
 		updatedFormElement.value = event.target.value;
-		updatedOrderForm[elementId] = updatedOrderForm;
-		this.setState({ orderForm: updatedOrderForm })
+		updatedFormElement.touched = true;
+		updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation)
+		updatedOrderForm[elementId] = updatedFormElement;
+
+		let isFormValid = true;
+		for (let element in updatedOrderForm) {
+			isFormValid = updatedOrderForm[element].valid && isFormValid;
+		}
+		this.setState({ orderForm: updatedOrderForm, isFormValid: isFormValid })
+	}
+
+	checkValidity = (value, rules) => {
+		let isValid = true;
+		if (rules.required) {
+			isValid = value.trim() !== '' && isValid;
+		}
+		return isValid;
 	}
 
 	render() {
@@ -50,15 +72,19 @@ class ContactData extends Component {
 			})
 		}
 		let form = (
-			<form>
+			<form onSubmit={this.orderHandler}>
 				{formElements.map(formElement => (
 					<Input
+						key={formElement.id}
 						changed={(event) => this.inputChangedHandler(event, formElement.id)} key={formElement.id}
 						elementtype={formElement.config.elementType}
 						elementConfig={formElement.config.elementConfig}
-						value={formElement.config.value} />
+						value={formElement.config.value}
+						invalid={!formElement.config.valid}
+						shouldValidate={formElement.config.validation}
+						touched={formElement.config.touched} />
 				))}
-				<Button btnType='Success' clicked={this.orderHandler}>ORDER</Button>
+				<Button btnType='Success' clicked={this.orderHandler} disabled={!this.state.isFormValid}>ORDER</Button>
 			</form>
 		)
 		if (this.state.loading) {
@@ -80,7 +106,12 @@ class ContactData extends Component {
 					type: 'text',
 					placeholder: 'Your name',
 				},
-				value: ''
+				value: '',
+				validation: {
+					required: true,
+				},
+				valid: false,
+				touched: false
 			},
 			street: {
 				elementType: 'input',
@@ -88,7 +119,12 @@ class ContactData extends Component {
 					type: 'text',
 					placeholder: 'Street',
 				},
-				value: ''
+				value: '',
+				validation: {
+					required: true,
+				},
+				valid: false,
+				touched: false
 			},
 			zipCode: {
 				elementType: 'input',
@@ -96,7 +132,12 @@ class ContactData extends Component {
 					type: 'text',
 					placeholder: 'Zip Code',
 				},
-				value: ''
+				value: '',
+				validation: {
+					required: true,
+				},
+				valid: false,
+				touched: false
 			},
 			country: {
 				elementType: 'input',
@@ -104,7 +145,12 @@ class ContactData extends Component {
 					type: 'text',
 					placeholder: 'Country',
 				},
-				value: ''
+				value: '',
+				validation: {
+					required: true,
+				},
+				valid: false,
+				touched: false
 			},
 			email: {
 				elementType: 'input',
@@ -112,7 +158,12 @@ class ContactData extends Component {
 					type: 'email',
 					placeholder: 'Email',
 				},
-				value: ''
+				value: '',
+				validation: {
+					required: true,
+				},
+				valid: false,
+				touched: false
 			},
 			deliveryMethod: {
 				elementType: 'select',
@@ -122,7 +173,9 @@ class ContactData extends Component {
 						{ value: 'cheapest', displayValue: 'Cheapest' }
 					],
 				},
-				value: ''
+				value: 'fastest',
+				valid: true,
+				validation: {}
 			},
 		}
 	}
