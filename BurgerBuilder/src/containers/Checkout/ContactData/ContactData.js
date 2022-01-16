@@ -8,6 +8,7 @@ import Input from '../../../components/UI/Input/Input'
 import { connect } from 'react-redux'
 import { purchaseBurger } from '../../../store/actions/index'
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler'
+import { updateObject,  checkValidity } from '../../../shared/utility';
 
 class ContactData extends Component {
 	state = {
@@ -33,16 +34,19 @@ class ContactData extends Component {
 	}
 
 	inputChangedHandler = (event, elementId) => {
+
+		// clone only required element, but still if we try to change the element config object, it is not cloned so shouldnt change it
+		const updatedFormElement = updateObject(this.state.orderForm[elementId], {
+			value: event.target.value,
+			touched: true,
+			valid: checkValidity(event.target.value, this.state.orderForm[elementId].validation)
+		})
+
 		// not deep clone, will only clone the form object but not its child 
 		// objects(will just set the pointer to them so every change in the child object will effect the state which is not good)
-		const updatedOrderForm = { ...this.state.orderForm };
-		// clone only required element, but still if we try to change the element config object, it is not cloned so shouldnt change it
-		const updatedFormElement = { ...updatedOrderForm[elementId] }
-
-		updatedFormElement.value = event.target.value;
-		updatedFormElement.touched = true;
-		updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation)
-		updatedOrderForm[elementId] = updatedFormElement;
+		const updatedOrderForm = updateObject(this.state.orderForm, {
+			[elementId]: updatedFormElement
+		});
 
 		let isFormValid = true;
 		for (let element in updatedOrderForm) {
@@ -51,14 +55,7 @@ class ContactData extends Component {
 		this.setState({ orderForm: updatedOrderForm, isFormValid: isFormValid })
 	}
 
-	checkValidity = (value, rules) => {
-		let isValid = true;
-		if (rules.required) {
-			isValid = value.trim() !== '' && isValid;
-		}
-		return isValid;
-	}
-
+	
 	render() {
 		const formElements = []
 		for (let key in this.state.orderForm) {
